@@ -77,11 +77,10 @@ class User(ABC):
 
 class Customer(User):
     def __init__(self, u, p, f, l, i):
+        super().__init__(u, p)
         self.first = f
         self.last = l
         self.id = i
-        self.username = u
-        self.password = p
         self.accounts = []
 
     def isAdmin(self):
@@ -90,13 +89,13 @@ class Customer(User):
     def getName(self):
         return self.first + " " + self.last
     
-    def createAccount(self):
+    def createAccount(self, b: Bank):
         accountType = ""
         while accountType.lower() != "s" and accountType.lower() != "c":
             accountType = input("s) savings account\nc)checking account\nchoose an acount type (s or c)")
         accountNumber = b.newAccount()
         newAccount = None
-        if accountType.lower == "s":
+        if accountType.lower() == "s":
             newAccount = Saving(accountNumber)
         else:
             newAccount = Checking(accountNumber)
@@ -125,12 +124,12 @@ class Customer(User):
         return False
 
     
-    def dashboard(self, bank):
+    def dashboard(self, b: Bank):
         option = int(input(" 1) Create Account\n2) View All Accounts\n3)Deposit\n4) Withdraw\n5) Transfer\n6) Close Account\n7) Exit\nSelect an option:"))
         print()
         match option:
             case 1:
-                self.createAccount()
+                self.createAccount(b)
             case 2:
                 self.readAccounts()
             case 3:
@@ -190,17 +189,66 @@ class Customer(User):
                 b.logout()
             case _:
                 print("invalid option")
+        return 0
 
 class Admin(User):
     def __init__(self, u, p):
-        self.username = u
-        self.password = p
+        super().__init__(u, p)
 
     def isAdmin(self):
         return True
     
-    def dashboard(self, bank):
-        return super().dashboard(bank)
+    def createUser(self, b: Bank):
+        accountType = input("a) admin user\nc)checking account\nchoose an acount type (s or c)")
+    
+    def findUser(self, b: Bank, u: str) -> User:
+        return b.users[u]
+
+    def readUsers(self, b: Bank):
+        pass
+    
+    def updateUserPassword(self, u:User, newPassword: str):
+        u.password = newPassword
+
+    def deleteUser(self, b: Bank, u: User) -> bool:
+        b.users.pop(u.username)
+    
+    def dashboard(self, b: Bank):
+        option = input("1) Create User\n2) Show all users\n3) Update User password\n4)DeleteUser\n5)Log out admin\n6)Exit program\nSelect Option 1-6")
+        print()
+        match option:
+            case 1:
+                self.createUser()
+            case 2:
+                self.readUsers()
+            case 3:
+                username = input("what is the username of the user?")
+                user = self.findUser()
+                if user:
+                    passw = input(f"what is the new username for {username}?")
+                    self.updateUserPassword(user, passw)
+                    print(f"{username} now has password {passw}")
+                else:
+                    print("invalid username")
+            case 4:
+                username = input("what is the username of the user to delete?")
+                user = self.findUser()
+                if user:
+                    self.deleteUser(b, user)
+                    print("user deleted")
+                else:
+                    print("invalid username")
+                
+            case 5:
+                b.logout()
+            case 6:
+                print("goodbye!")
+                return -1
+            case _:
+                print("invalid option!")
+        print()
+        return 0
+        
     
 
 class Bank:
@@ -242,7 +290,7 @@ class Bank:
 if __name__ == "__main__":
     b = Bank()
     status = 0
-    while True:
+    while status == 0:
         if(b.getUser()):
             status = b.getUser().dashboard(b)
         else:
