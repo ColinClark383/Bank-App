@@ -76,11 +76,10 @@ class User(ABC):
         pass
 
 class Customer(User):
-    def __init__(self, u, p, f, l, i):
+    def __init__(self, u, p, f, l, ):
         super().__init__(u, p)
         self.first = f
         self.last = l
-        self.id = i
         self.accounts = []
 
     def isAdmin(self):
@@ -199,13 +198,31 @@ class Admin(User):
         return True
     
     def createUser(self, b: Bank):
-        accountType = input("a) admin user\nc)checking account\nchoose an acount type (s or c)")
+        accountType = input("a) admin user\nc)checking account\nchoose an user type (a or c) ")
+        username = input("input the new user's username: ")
+        password = input("input the new user's password: ")
+        if accountType.lower() == "c":
+            first = input("input the customer's first name: ")
+            last = input("input the customer's last name: ")
+            c = Customer(username, password, first, last)
+            b.users[username] = c
+        elif accountType.lower() == "a":
+            a = Admin(username, password)
+            b.users[username] = a
+        else:
+            print("invalid user type. please try again")
     
     def findUser(self, b: Bank, u: str) -> User:
         return b.users[u]
 
     def readUsers(self, b: Bank):
-        pass
+        for user in b.users:
+            if b.users[user].isAdmin():
+                print("Admin account")
+            else:
+                print("Customer Account")
+            print(user)
+            print()
     
     def updateUserPassword(self, u:User, newPassword: str):
         u.password = newPassword
@@ -214,13 +231,13 @@ class Admin(User):
         b.users.pop(u.username)
     
     def dashboard(self, b: Bank):
-        option = input("1) Create User\n2) Show all users\n3) Update User password\n4)DeleteUser\n5)Log out admin\n6)Exit program\nSelect Option 1-6")
+        option = int(input("1) Create User\n2) Show all users\n3) Update User password\n4)DeleteUser\n5)Log out admin\n6)Exit program\nSelect Option 1-6: "))
         print()
         match option:
             case 1:
-                self.createUser()
+                self.createUser(b)
             case 2:
-                self.readUsers()
+                self.readUsers(b)
             case 3:
                 username = input("what is the username of the user?")
                 user = self.findUser()
@@ -255,7 +272,7 @@ class Bank:
     
     def __init__ (self):
         print("Welcome to the banking app")
-        self.users = {"admin": Admin("admin", "admin123"), "joe": Customer("joe", "123", "Joe", "Smith", 123)}
+        self.users = {"admin": Admin("admin", "admin123"), "joe": Customer("joe", "123", "Joe", "Smith")}
         self.currLogin = None
         self.nextAccount = 0
     
