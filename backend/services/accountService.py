@@ -40,12 +40,15 @@ class AccountService:
 
         return account
     
+    def get_all_accounts(self):
+        return self.account_repository.get_all()
+
     def get_accounts_for_customer(
         self,
-        customer_id
+        customer_name
     ):
-        return self.account_repository.get_by_customer_id(
-            customer_id
+        return self.customer_repository.get_by_name(
+            customer_name
         )
     
     def get_account(

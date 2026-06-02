@@ -14,6 +14,9 @@ class CustomerService:
 
     def search_customers(self, name):
         return self.repository.get_by_name(name)
+    
+    def get_premium_customers(self):
+        return self.repository.get_premium()
 
     def create_customer(self, name, email):
 

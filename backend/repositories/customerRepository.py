@@ -9,6 +9,16 @@ class CustomerRepository:
 
     def get_all(self):
         return self.customers
+    
+    def get_premium(self):
+        premium = []
+        for c in self.customers:
+            totalValue = 0
+            for a in c.accounts:
+                totalValue += a.balance
+            if totalValue >= 10000:
+                premium.append(c)
+        return premium
 
     def get_by_id(self, customer_id):
         for customer in self.customers:
@@ -20,7 +30,7 @@ class CustomerRepository:
         return [
             customer
             for customer in self.customers
-            if name.lower() in customer.name.lower()
+            if name.lower() == customer.name.lower()
         ]
 
     def create(self, customer):

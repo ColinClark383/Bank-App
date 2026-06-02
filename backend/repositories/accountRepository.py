@@ -13,11 +13,11 @@ class AccountRepository:
                 return account
         return None
 
-    def get_by_customer_id(self, customer_id):
+    def get_by_customer_name(self, customer_name):
         return [
             account
             for account in self.accounts
-            if account.customer_id == customer_id
+            if account.customer_id == customer_name
         ]
 
     def create(self, account):

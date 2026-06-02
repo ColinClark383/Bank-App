@@ -12,7 +12,9 @@ def get_all_customers():
     return customerService.get_all_customers()
 
 
-
+@router.get("/premium")
+def get_premium_customers():
+    return customerService.get_premium_customers()
 
 @router.get("/search")
 def search_customer(name: str):
