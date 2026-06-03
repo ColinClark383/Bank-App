@@ -26,45 +26,45 @@ class AccountService:
             return None
 
         account = Account(
-            id=self.account_repository.next_id,
+            _id=None,
+            customer_id=customer_id,
             account_type=account_type,
-            balance=balance,
-            customer_id=customer_id
+            balance=balance
         )
 
-        self.account_repository.next_id += 1
+        return self.account_repository.create(
+            account
+        )
 
-        self.account_repository.create(account)
-
-        customer.accounts.append(account)
-
-        return account
-    
     def get_all_accounts(self):
+
         return self.account_repository.get_all()
 
     def get_accounts_for_customer(
         self,
-        customer_name
+        customer_id
     ):
-        return self.customer_repository.get_by_name(
-            customer_name
+
+        return self.account_repository.get_by_customer_id(
+            customer_id
         )
-    
+
     def get_account(
         self,
         account_id
     ):
+
         return self.account_repository.get_by_id(
             account_id
         )
-    
+
     def update_account(
         self,
         account_id,
         account_type,
         balance
     ):
+
         account = self.account_repository.get_by_id(
             account_id
         )
@@ -75,8 +75,12 @@ class AccountService:
         account.account_type = account_type
         account.balance = balance
 
+        self.account_repository.update(
+            account
+        )
+
         return account
-    
+
     def delete_account(
         self,
         account_id
@@ -89,13 +93,8 @@ class AccountService:
         if account is None:
             return False
 
-        customer = self.customer_repository.get_by_id(
-            account.customer_id
+        self.account_repository.delete(
+            account
         )
-
-        if customer:
-            customer.accounts.remove(account)
-
-        self.account_repository.delete(account)
 
         return True

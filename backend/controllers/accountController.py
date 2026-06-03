@@ -30,9 +30,23 @@ def create_account(
 
     return account
 
+@router.get("/search")
+def get_customer_accounts(
+    id : str
+):
+    account = accountService.get_accounts_for_customer(id)
+    
+    if account is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Account not found"
+        )
+    
+    return account
+
 @router.put("/{account_id}")
 def update_account(
-    account_id: int,
+    account_id: str,
     request: UpdateAccountRequest
 ):
     account = accountService.update_account(
@@ -50,13 +64,13 @@ def update_account(
     return account
 
 @router.get("")
-def get_accounts(customer_id: int):
+def get_accounts():
 
     return accountService.get_all_accounts()
 
 @router.get("/{account_id}")
 def get_account(
-    account_id: int
+    account_id: str
 ):
     account = accountService.get_account(
         account_id
@@ -70,21 +84,11 @@ def get_account(
 
     return account
 
-@router.get("/search")
-def get_account_name(
-    name : str
-):
-    account = accountService.get_accounts_for_customer(name)
-    
-    if account is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Account not found"
-        )
+
 
 @router.delete("/{account_id}")
 def delete_account(
-    account_id: int
+    account_id: str
 ):
 
     success = accountService.delete_account(

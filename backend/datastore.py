@@ -8,7 +8,8 @@ customerRepository = CustomerRepository()
 accountRepository = AccountRepository()
 
 customerService = CustomerService(
-    customerRepository
+    customerRepository,
+    accountRepository
 )
 
 accountService = AccountService(

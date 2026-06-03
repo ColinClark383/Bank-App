@@ -21,7 +21,7 @@ def search_customer(name: str):
     return customerService.search_customers(name)
 
 @router.get("/{customer_id}")
-def get_customer(customer_id: int):
+def get_customer(customer_id: str):
 
     customer = customerService.get_customer(customer_id)
 
@@ -43,7 +43,7 @@ def create_customer(request: CreateCustomerRequest):
 
 @router.put("/{customer_id}")
 def update_customer(
-    customer_id: int,
+    customer_id: str,
     request: UpdateCustomerRequest
 ):
 
@@ -62,7 +62,7 @@ def update_customer(
     return customer
 
 @router.delete("/{customer_id}")
-def delete_customer(customer_id: int):
+def delete_customer(customer_id: str):
 
     success = customerService.delete_customer(customer_id)
 

@@ -1,40 +1,89 @@
+from database import customer_collection
 from models.customer import Customer
+
+from bson import ObjectId
 
 
 class CustomerRepository:
 
-    def __init__(self):
-        self.customers = []
-        self.next_id = 1
-
     def get_all(self):
-        return self.customers
-    
-    def get_premium(self):
-        premium = []
-        for c in self.customers:
-            totalValue = 0
-            for a in c.accounts:
-                totalValue += a.balance
-            if totalValue >= 10000:
-                premium.append(c)
-        return premium
+
+        customers = []
+
+        for customer in customer_collection.find():
+
+            customers.append(
+                Customer(
+                    _id=str(customer["_id"]),
+                    name=customer["name"],
+                    email=customer["email"]
+                )
+            )
+
+        return customers
 
     def get_by_id(self, customer_id):
-        for customer in self.customers:
-            if customer.id == customer_id:
-                return customer
-        return None
+
+        customer = customer_collection.find_one(
+            {"_id": ObjectId(customer_id)}
+        )
+
+        if customer is None:
+            return None
+
+        return Customer(
+            _id=customer["_id"],
+            name=customer["name"],
+            email=customer["email"]
+        )
 
     def get_by_name(self, name):
-        return [
-            customer
-            for customer in self.customers
-            if name.lower() == customer.name.lower()
-        ]
+
+        customers = []
+
+        results = customer_collection.find(
+            {
+                "name": {
+                    "$regex": f"^{name}$",
+                    "$options": "i"
+                }
+            }
+        )
+
+        for customer in results:
+            customers.append(
+                Customer(
+                    _id=customer["_id"],
+                    name=customer["name"],
+                    email=customer["email"]
+                )
+            )
+
+        return customers
 
     def create(self, customer):
-        self.customers.append(customer)
+
+        customer_collection.insert_one(
+            {
+                "name": customer.name,
+                "email": customer.email,
+            }
+        )
+
+    def update(self, customer):
+
+        customer_collection.update_one(
+            {"_id": ObjectId(customer._id)},
+            {
+                "$set": {
+                    "name": customer.name,
+                    "email": customer.email
+                }
+            }
+        )
 
     def delete(self, customer):
-        self.customers.remove(customer)
+
+        customer_collection.delete_one(
+            {"_id": ObjectId(customer._id)}
+        )

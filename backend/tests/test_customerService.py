@@ -12,7 +12,6 @@ def test_create_customer():
         "joe@email.com"
     )
 
-    assert customer.id == 1
     assert customer.name == "Joe Smith"
     assert customer.email == "joe@email.com"
 
@@ -30,7 +29,7 @@ def test_get_customer():
     customer = service.get_customer(created.id)
 
     assert customer is not None
-    assert customer.id == created.id
+    assert customer._id == created._id
 
 
 def test_get_missing_customer():

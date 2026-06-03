@@ -3,8 +3,9 @@ from models.customer import Customer
 
 class CustomerService:
 
-    def __init__(self, repository):
+    def __init__(self, repository, account):
         self.repository = repository
+        self.account_repo = account
 
     def get_all_customers(self):
         return self.repository.get_all()
@@ -16,17 +17,25 @@ class CustomerService:
         return self.repository.get_by_name(name)
     
     def get_premium_customers(self):
-        return self.repository.get_premium()
+        premium = []
+        customers = self.get_all_customers()
+        for customer in customers:
+            total_value = 0
+            accounts = self.account_repo.get_by_customer_id(customer._id)
+            for account in accounts:
+                total_value += account.balance
+
+            if total_value >= 10000:
+                premium.append(customer)
+
+        return premium
 
     def create_customer(self, name, email):
 
         customer = Customer(
-            id=self.repository.next_id,
             name=name,
             email=email
         )
-
-        self.repository.next_id += 1
 
         self.repository.create(customer)
 
@@ -46,6 +55,8 @@ class CustomerService:
 
         customer.name = name
         customer.email = email
+
+        self.repository.update(customer)
 
         return customer
 

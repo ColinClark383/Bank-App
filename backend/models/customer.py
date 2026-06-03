@@ -1,11 +1,13 @@
+from bson import ObjectId
+
 class Customer:
+
     def __init__(
         self,
-        id: int,
-        name: str,
-        email: str
+        _id=None,
+        name="",
+        email=""
     ):
-        self.id = id
+        self._id = str(_id) if _id else None
         self.name = name
         self.email = email
-        self.accounts = []

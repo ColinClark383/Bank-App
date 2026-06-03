@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
-
 class CreateAccountRequest(BaseModel):
-    customer_id: int
+    customer_id: str
     account_type: str
     balance: float
 
