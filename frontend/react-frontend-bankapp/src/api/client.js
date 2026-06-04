@@ -1,7 +1,8 @@
-const BASE_URL = "http://localhost:8000"; // change to your backend
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export async function apiRequest(endpoint, method = "GET", body, token) {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(`${API_URL}${endpoint}`, {
     method,
     headers: {
       "Content-Type": "application/json",
