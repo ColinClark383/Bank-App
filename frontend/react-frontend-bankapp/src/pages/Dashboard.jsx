@@ -47,29 +47,27 @@ async function loadAccounts() {
   }
 }
 
-async function handleUpdateBalance(account) {
+async function handleDeposit(account) {
   const newBalance = prompt(
-    "Enter new balance:",
-    account.balance
+    "Enter deposit amount:"
   );
 
   if (newBalance === null) return;
 
-  const balance = Number(newBalance);
+  const balance_change = Number(newBalance);
 
-  if (isNaN(balance)) {
+  if (isNaN(balance_change)) {
     alert("Please enter a valid number.");
     return;
   }
 
   try {
     const updatedAccount = {
-      ...account,
-      balance,
+      balance_change: balance_change
     };
 
     await apiRequest(
-      `/api/accounts/${account._id}`,
+      `/api/accounts/${account._id}/deposit`,
       "PUT",
       updatedAccount
     );
@@ -77,7 +75,44 @@ async function handleUpdateBalance(account) {
     setAccounts((prev) =>
       prev.map((a) =>
         a._id === account._id
-          ? { ...a, balance }
+          ? { ...a, balance: balance_change + a.balance }
+          : a
+      )
+    );
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function handleWithdraw(account) {
+  const newBalance = prompt(
+    "Enter withdraw amount:"
+  );
+
+  if (newBalance === null) return;
+
+  const balance_change = Number(newBalance);
+
+  if (isNaN(balance_change)) {
+    alert("Please enter a valid number.");
+    return;
+  }
+
+  try {
+    const updatedAccount = {
+      balance_change: balance_change
+    };
+
+    await apiRequest(
+      `/api/accounts/${account._id}/withdraw`,
+      "PUT",
+      updatedAccount
+    );
+
+    setAccounts((prev) =>
+      prev.map((a) =>
+        a._id === account._id
+          ? { ...a, balance: a.balance - balance_change }
           : a
       )
     );
@@ -95,7 +130,8 @@ async function handleUpdateBalance(account) {
         <AccountCard
             key={a._id}
             account={a}
-            onUpdateBalance={handleUpdateBalance}
+            onDeposit={handleDeposit}
+            onWithdraw={handleWithdraw}
             onDelete={handleDeleteAccount}
         />
         ))}

@@ -69,6 +69,7 @@ class AccountService:
             account_id
         )
 
+
         if account is None:
             return None
 
@@ -98,3 +99,57 @@ class AccountService:
         )
 
         return True
+    
+    def withdraw_account(
+        self,
+        account_id,
+        balance
+    ):
+        if balance < 0:
+            return False
+        
+        account = self.account_repository.get_by_id(
+            account_id
+        )
+
+        if account is None:
+            return None
+        
+        account.balance -= balance
+
+        if account.balance < 0:
+            return False
+        
+        self.account_repository.update(
+            account
+        )
+
+        return account
+    
+    def deposit_account(
+        self,
+        account_id,
+        balance
+    ):
+        if balance < 0:
+            return False
+        
+        account = self.account_repository.get_by_id(
+            account_id
+        )
+
+        if account is None:
+            return None
+        
+        account.balance += balance
+        
+        self.account_repository.update(
+            account
+        )
+
+        return account
+
+    
+    
+
+    

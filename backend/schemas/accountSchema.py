@@ -9,3 +9,6 @@ class CreateAccountRequest(BaseModel):
 class UpdateAccountRequest(BaseModel):
     account_type: str
     balance: float
+
+class BalanceChangeRequest(BaseModel):
+    balance_change: float

@@ -4,7 +4,8 @@ from datastore import accountService
 
 from schemas.accountSchema import (
     CreateAccountRequest,
-    UpdateAccountRequest
+    UpdateAccountRequest,
+    BalanceChangeRequest
 )
 
 router = APIRouter(
@@ -36,6 +37,52 @@ def get_customer_accounts(
 ):
     account = accountService.get_accounts_for_customer(id)
     
+    if account is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Account not found"
+        )
+    
+    return account
+
+@router.put("/{account_id}/withdraw")
+def withdraw_account(
+    account_id: str,
+    request: BalanceChangeRequest
+):
+    account = accountService.withdraw_account(
+        account_id,
+        request.balance_change
+    )
+
+    if account is False:
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid balance change"
+        )
+    
+    if account is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Account not found"
+        )
+    
+    return account
+
+@router.put("/{account_id}/deposit")
+def deposit_account(
+    account_id: str,
+    request: BalanceChangeRequest
+):
+    account = accountService.deposit_account(
+        account_id,
+        request.balance_change
+    )
+    if account is False:
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid balance change"
+        )
     if account is None:
         raise HTTPException(
             status_code=404,

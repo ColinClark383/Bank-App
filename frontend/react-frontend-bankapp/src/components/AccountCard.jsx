@@ -2,6 +2,8 @@ export default function AccountCard({
   account,
   onDelete,
   onUpdateBalance,
+  onDeposit,
+  onWithdraw
 }) {
   return (
     <div style={styles.card}>
@@ -11,9 +13,15 @@ export default function AccountCard({
 
       <div style={styles.buttonContainer}>
         <button
-          onClick={() => onUpdateBalance(account)}
+          onClick={() => onDeposit(account)}
         >
-          Update Balance
+          Deposit
+        </button>
+
+        <button
+          onClick={() => onWithdraw(account)}
+        >
+          Withdraw
         </button>
 
         <button
